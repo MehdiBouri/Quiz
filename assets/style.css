@@ -15,9 +15,9 @@ h1 {
 }
 
 h2 {
-    font-size:28px;
+    font-size:32px;
     line-height: 1.2;
-    color:#5BB5DE;
+    color:#419fca;
 }
 
 
@@ -60,6 +60,21 @@ button:hover {
 
 .questionText {
     font-weight: bold;
+}
+
+.answer {
+    border-radius:15px;
+    margin-bottom:3px;
+}
+.good {
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
+    background-color: rgb(40, 199, 40);
+    color: white;
+}
+.bad {
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
+    background-color: rgb(189, 45, 45);
+    color: white;
 }
 
 

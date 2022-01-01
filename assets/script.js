@@ -92,15 +92,29 @@ function submit(event)
    var score = 0;
 
    // Vérifie les réponses à toutes les questions
-   for(i = 0; i < allQuestions.length; i++)
+   for(let i = 0; i < allQuestions.length; i++)
    {
-      var selected = radioValue('question' + (i +1));
-      var answer = allQuestions[i].propositions[selected];
-      var goodAnswer = allQuestions[i].reponse;
+      var answerNumber = radioValue('question' + (i +1));
 
-      if (selected) {
+      var answer = allQuestions[i].propositions[answerNumber];
+      var goodAnswer = allQuestions[i].reponse;
+      
+      var label = document.querySelectorAll('#question' + (i + 1) + ' label');
+
+      // Réinitialise la couleur des réponses
+      for(let l = 0; l < label.length; l++) {
+         label[l].parentNode.classList.remove('good');
+         label[l].parentNode.classList.remove('bad');
+      }
+
+      // Compte le score et applique les couleurs
+      if (answerNumber) {
          if (answer == goodAnswer) {
             score++;
+            label[answerNumber].parentNode.classList.add('good');
+         }
+         else {
+            label[answerNumber].parentNode.classList.add('bad');
          }
       }
    }
