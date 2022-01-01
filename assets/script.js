@@ -42,8 +42,8 @@ function showResult()
 {
    document.querySelector('form').innerHTML += `
    <div id="result">
-      <button type="submit" class="btn">Valider</button>
       <div id="score"></div>
+      <button type="submit" class="btn">Valider</button>
    </div>`;
 }
 
