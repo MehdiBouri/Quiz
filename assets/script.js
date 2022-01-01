@@ -9,7 +9,6 @@ async function getJson()
    // Récupère les données avec la fonction fetch()
    // Ici le fichier s'appelle quiz.json et il est situé à la racine "/" du dossier projet
    const data = await fetch("http://localhost:5500/quiz.json");
- 
    return data.json(); // Retourne les données au format Json
 }
 
@@ -20,62 +19,108 @@ async function getJson()
 // car elle utilise fetch() (et “await” pour attendre une réponse)
 async function start()
 {
-   var allQuestions = await getJson(); // Récupère le tableau json
-   
+   document.querySelector('form').addEventListener('submit', submit);
+
+   // Récupère le tableau json
+   allQuestions = await getJson(); 
    // Mélange le tableau json
    shuffleArray(allQuestions);
-
    // Sélectionne les 5 premières questions
    allQuestions = allQuestions.slice(0, 5);
    
    
    // Affiche les 5 questions avec leurs propositions
-   allQuestions.forEach((question, i) => {
-      showQuestion(i + 1, question);
-   })
+   showQuestions();
 
-
-
-   var form = document.querySelector('form');
-
-   form.innerHTML += `
-   <div id="result">
-      <button type="submit" class="btn">Valider</button>
-   </div>`
+   // Affiche le bouton valider et le score
+   showResult();
 }
 
 
 
+function showResult()
+{
+   document.querySelector('form').innerHTML += `
+   <div id="result">
+      <button type="submit" class="btn">Valider</button>
+      <div id="score"></div>
+   </div>`;
+}
 
 
-function showQuestion(i, question)
+
+// * AFFICHAGE DES QUESTIONS *
+function showQuestions()
 {
    var form = document.querySelector('form');
 
-   form.innerHTML += `
-   <div id="question${i}" class="question">
-      <div class="questionText">${question.question}</div>
-      <div class="answer">
-            <input type="radio" id="answer${i}-1" name="question${i}">
-            <label for="answer${i}-1">${question.propositions[0]}</label>
+   // Affiche les 5 questions avec leurs propositions
+   for(i = 1; i < allQuestions.length + 1; i++)
+   {
+      question = allQuestions[i - 1];
+
+      form.innerHTML += `
+      <div id="question${i}" class="question">
+         <div class="questionText">${question.question}</div>
+         <div class="answer">
+               <input type="radio" name="question${i}" id="answer${i}-1" value="0">
+               <label for="answer${i}-1">${question.propositions[0]}</label>
+         </div>
+         <div class="answer">
+               <input type="radio" name="question${i}" id="answer${i}-2" value="1">
+               <label for="answer${i}-2">${question.propositions[1]}</label>
+         </div>
+         <div class="answer">
+               <input type="radio" name="question${i}" id="answer${i}-3" value="2">
+               <label for="answer${i}-3">${question.propositions[2]}</label>
+         </div>
+         <div class="answer">
+               <input type="radio" name="question${i}" id="answer${i}-4" value="3">
+               <label for="answer${i}-4">${question.propositions[3]}</label>
+         </div>
       </div>
-      <div class="answer">
-            <input type="radio" id="answer${i}-2" name="question${i}">
-            <label for="answer${i}-2">${question.propositions[1]}</label>
-      </div>
-      <div class="answer">
-            <input type="radio" id="answer${i}-3" name="question${i}">
-            <label for="answer${i}-3">${question.propositions[2]}</label>
-      </div>
-      <div class="answer">
-            <input type="radio" id="answer${i}-4" name="question${i}">
-            <label for="answer${i}-4">${question.propositions[3]}</label>
-      </div>
-   </div>
-   `;
+      `;
+   }
 }
 
 
+// * VALIDATION DES RÉPONSES *
+function submit(event)
+{
+   event.preventDefault();
+
+   var score = 0;
+
+   // Vérifie les réponses à toutes les questions
+   for(i = 0; i < allQuestions.length; i++)
+   {
+      var selected = radioValue('question' + (i +1));
+      var answer = allQuestions[i].propositions[selected];
+      var goodAnswer = allQuestions[i].reponse;
+
+      if (selected) {
+         if (answer == goodAnswer) {
+            score++;
+         }
+      }
+   }
+
+   // Affiche le score
+   document.getElementById('score').innerHTML = '<h2>VOTRE SCORE : ' + score + ' /5</h2>';
+}
+
+
+
+
+// RÉCUPÉRER LA VALEUR D'UN CHAMPS RADIOS
+function radioValue(name) {
+   var radio = document.querySelector('input[name= ' + name + ']:checked');
+
+   if (radio) {
+      return radio.value;
+   }
+   return null;
+}
 
 // Fonction de MÉLANGE ALÉATOIRE d’un tableau
 function shuffleArray(array) {
