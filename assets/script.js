@@ -97,48 +97,54 @@ function submit(event)
 {
    event.preventDefault();
 
-   var score = 0;
-
-   // Vérifie les réponses à toutes les questions
-   for(let i = 0; i < allQuestions.length; i++)
-   {
-      var answerNumber = radioValue('question' + (i + 1));
-
-      var answer = allQuestions[i].propositions[answerNumber];
-      var goodAnswer = allQuestions[i].reponse;
-      
-      var label = document.querySelectorAll('#question' + (i + 1) + ' label');
-
-      // Réinitialise la couleur des réponses
-      for(let l = 0; l < label.length; l++) {
-         label[l].parentNode.classList.remove('good');
-         label[l].parentNode.classList.remove('bad');
-      }
-
-      // Compte le score et applique les couleurs
-      if (answerNumber) {
-         if (answer == goodAnswer) {
-            score++;
-            label[answerNumber].parentNode.classList.add('good');
-         }
-         else {
-            label[answerNumber].parentNode.classList.add('bad');
-         }
-      }
-
-      // Affiche une anecdote
-      var anecdote = document.querySelector('#question' + (i + 1) + ' .anecdote');
-
-      anecdote.innerHTML = '<hr/>' + allQuestions[i].anecdote;
-   }
-
-   // Affiche le score
-   document.getElementById('score').innerHTML = '<h2>VOTRE SCORE : ' + score + ' /5</h2>';
-
    var name = document.querySelector('#playerName').value;
-   saveScore(name, score);
 
-   showScore();
+   if (name) {
+      var score = 0;
+
+      // Vérifie les réponses à toutes les questions
+      for(let i = 0; i < allQuestions.length; i++)
+      {
+         var answerNumber = radioValue('question' + (i + 1));
+
+         var answer = allQuestions[i].propositions[answerNumber];
+         var goodAnswer = allQuestions[i].reponse;
+         
+         var label = document.querySelectorAll('#question' + (i + 1) + ' label');
+
+         // Réinitialise la couleur des réponses
+         for(let l = 0; l < label.length; l++) {
+            label[l].parentNode.classList.remove('good');
+            label[l].parentNode.classList.remove('bad');
+         }
+
+         // Compte le score et applique les couleurs
+         if (answerNumber) {
+            if (answer == goodAnswer) {
+               score++;
+               label[answerNumber].parentNode.classList.add('good');
+            }
+            else {
+               label[answerNumber].parentNode.classList.add('bad');
+            }
+         }
+
+         // Affiche une anecdote
+         var anecdote = document.querySelector('#question' + (i + 1) + ' .anecdote');
+
+         anecdote.innerHTML = '<hr/>' + allQuestions[i].anecdote;
+      }
+
+      // Affiche le score
+      document.getElementById('score').innerHTML = '<h2>VOTRE SCORE : ' + score + ' /5</h2>';
+
+      saveScore(name, score);
+
+      showScore();
+   }
+   else {
+      document.getElementById('score').innerHTML += '<p class="alert-warning">Veuillez entrer un nom.</p>';
+   }
 }
 
 
@@ -165,16 +171,21 @@ function saveScore(name, score)
 
 
    // Ajoute le score du joueur
-   if (oldScores.length) {
+   if (oldScores && oldScores.length) {
       AllScores = oldScores
       AllScores.push(newScore)
+
+      // Trie les scores par ordre décroissant
+      AllScores.sort(function(a, b) { 
+         return b.score - a.score;
+      });
+      AllScores = AllScores.slice(0,5); // Conserve les 5 meilleurs
+   }
+   else {
+      AllScores = [newScore]
    }
 
-   // Trie les scores par ordre décroissant
-   AllScores.sort(function(a, b) { 
-      return b.score - a.score;
-   });
-   AllScores = AllScores.slice(0,5); // Conserve les 5 meilleurs
+   
    
    // Enregistre tous les scores
    localStorage.setItem('score', JSON.stringify(AllScores))
