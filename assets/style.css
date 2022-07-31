@@ -7,6 +7,9 @@ body {
     margin: 0;
 }
 
+@media (max-width: 767px) {
+    
+}
 
 h1 {
     font-size: 65px;
@@ -16,6 +19,7 @@ h1 {
 
 h2 {
     font-size:32px;
+    font-weight: bold;
     line-height: 1.2;
     color:#419fca;
 }
@@ -58,6 +62,11 @@ button:hover {
     margin: 20px;
 }
 
+#score {
+    text-align: left;
+    margin-bottom:10px;
+}
+
 .questionText {
     font-weight: bold;
 }
@@ -65,6 +74,7 @@ button:hover {
 .answer {
     border-radius:15px;
     margin-bottom:3px;
+    padding-left:5px;
 }
 .good {
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);

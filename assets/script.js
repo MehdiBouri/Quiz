@@ -8,7 +8,7 @@ async function getJson()
 {
    // Récupère les données avec la fonction fetch()
    // Ici le fichier s'appelle quiz.json et il est situé à la racine "/" du dossier projet
-   const data = await fetch("http://localhost:5500/quiz.json");
+   const data = await fetch("/quiz.json");
    return data.json(); // Retourne les données au format Json
 }
 
@@ -22,7 +22,7 @@ async function start()
    document.querySelector('form').addEventListener('submit', submit);
 
    // Récupère le tableau json
-   allQuestions = await getJson(); 
+   allQuestions = await getJson();
    // Mélange le tableau json
    shuffleArray(allQuestions);
    // Sélectionne les 5 premières questions
@@ -33,19 +33,27 @@ async function start()
    showQuestions();
 
    // Affiche le bouton valider et le score
-   showResult();
+   showSubmit();
+
+   // Meilleure Score
+   showScore();
 }
 
 
 
-function showResult()
+function showSubmit()
 {
    document.querySelector('form').innerHTML += `
-   <div id="result">
-      <div id="score"></div>
-      <button type="submit" class="btn">Valider</button>
-   </div>`;
+      <div id="result">
+         <div id="score">
+            <h3>TOP 5 des scores</h3>
+         </div>
+         <hr/>
+         <input type="text" id="playerName" class="mb-3" placeholder="Votre Nom"/>
+         <button type="submit" class="btn btn-lg btn-success">VALIDER</button>
+      </div>`;
 }
+
 
 
 
@@ -59,29 +67,29 @@ function showQuestions()
    {
       question = allQuestions[i - 1];
 
-      form.innerHTML += `
+      // Question
+      var formText = `
       <div id="question${i}" class="question">
-         <div class="questionText">${question.question}</div>
-         <div class="answer">
-               <input type="radio" name="question${i}" id="answer${i}-1" value="0">
-               <label for="answer${i}-1">${question.propositions[0]}</label>
-         </div>
-         <div class="answer">
-               <input type="radio" name="question${i}" id="answer${i}-2" value="1">
-               <label for="answer${i}-2">${question.propositions[1]}</label>
-         </div>
-         <div class="answer">
-               <input type="radio" name="question${i}" id="answer${i}-3" value="2">
-               <label for="answer${i}-3">${question.propositions[2]}</label>
-         </div>
-         <div class="answer">
-               <input type="radio" name="question${i}" id="answer${i}-4" value="3">
-               <label for="answer${i}-4">${question.propositions[3]}</label>
-         </div>
-      </div>
-      `;
+         <p class="questionText">${question.question}</p>`;
+
+      // Propositions
+      for (let a = 0; a <= 3; a++) {
+         formText +=
+            `<div class="answer">
+               <input type="radio" name="question${i}" id="answer${i}-${(a + 1)}" value="${a}">
+               <label for="answer${i}-${(a + 1)}">${question.propositions[a]}</label>
+            </div>`;
+      }
+
+      formText += `
+         <p class="anecdote"></p>
+      </div>`;
+
+      // Affichage
+      form.innerHTML += formText;
    }
 }
+
 
 
 // * VALIDATION DES RÉPONSES *
@@ -94,7 +102,7 @@ function submit(event)
    // Vérifie les réponses à toutes les questions
    for(let i = 0; i < allQuestions.length; i++)
    {
-      var answerNumber = radioValue('question' + (i +1));
+      var answerNumber = radioValue('question' + (i + 1));
 
       var answer = allQuestions[i].propositions[answerNumber];
       var goodAnswer = allQuestions[i].reponse;
@@ -117,12 +125,103 @@ function submit(event)
             label[answerNumber].parentNode.classList.add('bad');
          }
       }
+
+      // Affiche une anecdote
+      var anecdote = document.querySelector('#question' + (i + 1) + ' .anecdote');
+
+      anecdote.innerHTML = '<hr/>' + allQuestions[i].anecdote;
    }
 
    // Affiche le score
    document.getElementById('score').innerHTML = '<h2>VOTRE SCORE : ' + score + ' /5</h2>';
+
+   var name = document.querySelector('#playerName').value;
+   saveScore(name, score);
+
+   showScore();
 }
 
+
+
+
+function saveScore(name, score)
+{
+   var newScore = {'name': name, 'score': score}
+   var oldScores = localStorage.getItem('score')
+   
+   // Récupère les anciens scores
+   try {
+      oldScores = JSON.parse(oldScores);
+
+      // Nettoie le tableau des anciens scores s'ils ont un format incorrect
+      for(let i = 0; i < oldScores.length; i++) {
+         if (typeof oldScores[i]['name'] === 'undefined') {
+            oldScores.splice(i, 1);
+         }
+      }
+   } catch (e) {
+      oldScores = null
+   }
+
+
+   // Ajoute le score du joueur
+   if (oldScores.length) {
+      AllScores = oldScores
+      AllScores.push(newScore)
+   }
+
+   // Trie les scores par ordre décroissant
+   AllScores.sort(function(a, b) { 
+      return b.score - a.score;
+   });
+   AllScores = AllScores.slice(0,5); // Conserve les 5 meilleurs
+   
+   // Enregistre tous les scores
+   localStorage.setItem('score', JSON.stringify(AllScores))
+}
+
+
+
+function showScore() {
+   var scores = JSON.parse(localStorage.getItem('score'))
+
+   var scoreEl = document.querySelector('#score');
+
+   for(let i = 0; i < scores.length; i++) {
+      scoreEl.innerHTML += '<b>' + (i+1) + '.</b> ' + scores[i]['name'] + '<br/>'
+   }
+}
+
+
+
+/* Filtrer array s'il a atteint la taille max de 10 */
+function sortLocalStorageData(){
+  
+  if(localStorage.getItem('name') == null && localStorage.getItem('score') == null){ // si dans mon local storage, la clé name et score n'existent pas alors:
+      dontDislayScores();// j'envoie la fonction dontDisplayScores
+  }
+  else{ //sinon :
+      /* Récupération de mes variables pour accéder au localStorage */
+      let nameArray = JSON.parse(localStorage.getItem('name'));
+      let scoreArray = JSON.parse(localStorage.getItem('score'));
+      
+      for (let objectIndex = 0; objectIndex < nameArray.length; objectIndex++) {//boucle pour créer des objets en fonction de ce qu'il y a dans mon localstorage
+          nameScore = {
+              name: nameArray[objectIndex],// j'ajoute dans mon item name: tous les items du tableau nameArray
+              score: scoreArray[objectIndex] // j'ajoute à score tous les items de mon tableau scoreArray
+          };
+          arrayNameScore.push(nameScore);// dans mon tableau arrayNameScore je stocke mes objets
+      }
+      /* fonction de tri pour comparer que les scores */
+      arrayNameScore.sort(function(a, b) { 
+          return b.score - a.score  ||  a.name.localeCompare(b.name); // ça me trie les objets du plus haut score au plus petit
+      });
+      
+      var sliced = arrayNameScore.slice(0,5); // je coupe mon array de 0 à 5 (je ne garde que les scores les plus élevés)
+      
+      displayScores(sliced); //appel de ma fonction pour display les meilleurs scores
+   }
+}
 
 
 
