@@ -181,6 +181,7 @@ function saveScore(name, score)
       });
       AllScores = AllScores.slice(0,5); // Conserve les 5 meilleurs
    }
+   // Si c'est le premier score
    else {
       AllScores = [newScore]
    }

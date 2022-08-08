@@ -5,6 +5,7 @@ body {
     color:rgb(68, 68, 68);
     line-height: 1.4;
     margin: 0;
+    background-image:url('/assets/background.jpg');
 }
 
 @media (max-width: 767px) {
@@ -15,6 +16,9 @@ h1 {
     font-size: 65px;
     text-align: center;
     margin:20px;
+    font-weight:bold;
+    color:white;
+    text-shadow:0 0 5px rgba(0,0,0,.8);
 }
 
 h2 {
@@ -24,6 +28,12 @@ h2 {
     color:#419fca;
 }
 
+h3 {
+    font-weight: bold;
+    color:#b31f1f;
+    text-shadow:0 1px 1px rgba(0,0,0,.1);
+}
+
 
 form {
     display: grid;
@@ -31,8 +41,6 @@ form {
 }
 
 form button {
-    display: inline-block;
-    background-color: #65c20f;
     color: white;
     font-size: 32px;
     font-weight: bold;
@@ -50,7 +58,7 @@ button:hover {
 .question {
     margin:20px;
     padding:15px 20px;
-    background-color: rgb(218, 226, 233);
+    background-color: rgb(255, 255, 255);
     border:2px solid black;
     border-radius: 20px;
 }
@@ -60,6 +68,10 @@ button:hover {
     flex-direction: column;
     text-align: center;
     margin: 20px;
+    background-color: rgb(218, 226, 233);
+    padding:15px 20px;
+    border:2px solid black;
+    border-radius: 20px;
 }
 
 #score {
@@ -83,7 +95,7 @@ button:hover {
 }
 .bad {
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .3);
-    background-color: rgb(189, 45, 45);
+    background-color: rgb(192, 24, 24);
     color: white;
 }
 
