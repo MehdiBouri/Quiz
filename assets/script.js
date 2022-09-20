@@ -206,37 +206,6 @@ function showScore() {
 
 
 
-/* Filtrer array s'il a atteint la taille max de 10 */
-function sortLocalStorageData(){
-  
-  if(localStorage.getItem('name') == null && localStorage.getItem('score') == null){ // si dans mon local storage, la clé name et score n'existent pas alors:
-      dontDislayScores();// j'envoie la fonction dontDisplayScores
-  }
-  else{ //sinon :
-      /* Récupération de mes variables pour accéder au localStorage */
-      let nameArray = JSON.parse(localStorage.getItem('name'));
-      let scoreArray = JSON.parse(localStorage.getItem('score'));
-      
-      for (let objectIndex = 0; objectIndex < nameArray.length; objectIndex++) {//boucle pour créer des objets en fonction de ce qu'il y a dans mon localstorage
-          nameScore = {
-              name: nameArray[objectIndex],// j'ajoute dans mon item name: tous les items du tableau nameArray
-              score: scoreArray[objectIndex] // j'ajoute à score tous les items de mon tableau scoreArray
-          };
-          arrayNameScore.push(nameScore);// dans mon tableau arrayNameScore je stocke mes objets
-      }
-      /* fonction de tri pour comparer que les scores */
-      arrayNameScore.sort(function(a, b) { 
-          return b.score - a.score  ||  a.name.localeCompare(b.name); // ça me trie les objets du plus haut score au plus petit
-      });
-      
-      var sliced = arrayNameScore.slice(0,5); // je coupe mon array de 0 à 5 (je ne garde que les scores les plus élevés)
-      
-      displayScores(sliced); //appel de ma fonction pour display les meilleurs scores
-   }
-}
-
-
-
 // RÉCUPÉRER LA VALEUR D'UN CHAMPS RADIOS
 function radioValue(name) {
    var radio = document.querySelector('input[name= ' + name + ']:checked');
